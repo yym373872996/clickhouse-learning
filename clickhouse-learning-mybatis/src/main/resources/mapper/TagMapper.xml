@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="person.rulo.clickhouse.learning.mybatis.mapper.TagMapper">
+    <resultMap id="BaseResultMap" type="person.rulo.clickhouse.learning.mybatis.entity.Tag">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <id column="tag_id" jdbcType="INTEGER" property="tagId" />
+        <result column="tag_name" jdbcType="VARCHAR" property="tagName" />
+        <result column="tag_value" jdbcType="VARCHAR" property="tagValue" />
+        <result column="user_list" jdbcType="ARRAY" property="userList" />
+        <result column="day_num" jdbcType="VARCHAR" property="dayNum" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,tag_id,tag_name,tag_value,bitmapToArray(user_list) as user_list,day_num
+    </sql>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List" />
+        from tag
+    </select>
+</mapper>

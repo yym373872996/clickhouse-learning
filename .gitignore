@@ -1,0 +1,4 @@
+# Project exclude paths
+/clickhouse-learning-jdbc/target/
+/clickhouse-learning-mybatis/target/
+/clickhouse-learning-springboot/target/
