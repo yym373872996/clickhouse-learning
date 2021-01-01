@@ -6,18 +6,31 @@ import org.springframework.stereotype.Component;
 /**
  * @Author rulo
  * @Date 2020/11/21 13:23
+ *
+ * ClickHouse JDBC 配置属性
  */
 @Component
 @ConfigurationProperties(prefix = "spring.datasource.clickhouse")
-public class JdbcParamConfig {
+public class ClickHouseJdbcProps {
+
+    private String dbType;
     private String driver;
-    private String url;
+    private String nodeList;
+    private String database;
     private String username;
     private String password;
     private Integer initialSize;
     private Integer maxActive;
     private Integer minIdle;
     private Integer maxWait;
+
+    public String getDbType() {
+        return dbType;
+    }
+
+    public void setDbType(String dbType) {
+        this.dbType = dbType;
+    }
 
     public String getDriver() {
         return driver;
@@ -27,12 +40,20 @@ public class JdbcParamConfig {
         this.driver = driver;
     }
 
-    public String getUrl() {
-        return url;
+    public String getNodeList() {
+        return nodeList;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setNodeList(String nodeList) {
+        this.nodeList = nodeList;
+    }
+
+    public String getDatabase() {
+        return database;
+    }
+
+    public void setDatabase(String database) {
+        this.database = database;
     }
 
     public String getUsername() {

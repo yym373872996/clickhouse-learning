@@ -1,23 +1,19 @@
 package person.rulo.clickhouse.learning.springboot.runner;
 
-import com.alibaba.druid.pool.DruidDataSource;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 import person.rulo.clickhouse.learning.springboot.core.executor.SqlExecutor;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
-import java.sql.*;
-import java.util.ArrayList;
+import javax.sql.RowSet;
+import java.sql.ResultSetMetaData;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * @Author rulo
- * @Date 2020/11/22 14:49
+ * @Date 2020/11/24 19:24
  */
 //@Component
 public class TestDataSourceRunner implements ApplicationRunner {
@@ -27,7 +23,16 @@ public class TestDataSourceRunner implements ApplicationRunner {
     @Resource
     SqlExecutor sqlExecutor;
 
+    @Override
     public void run(ApplicationArguments args) throws Exception {
-        sqlExecutor.executeQuery(dataSource, "show databases");
+        RowSet rowSet = sqlExecutor.executeQuery(dataSource, "show databases");
+        ResultSetMetaData rsmd = rowSet.getMetaData();
+        while (rowSet.next()){
+            Map<String, String> map = new HashMap<>();
+            for (int i = 1; i <= rsmd.getColumnCount(); i++) {
+                map.put(rsmd.getColumnName(i), rowSet.getString(rsmd.getColumnName(i)));
+            }
+            System.out.println(map);
+        }
     }
 }

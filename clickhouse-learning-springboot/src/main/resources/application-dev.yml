@@ -1,0 +1,42 @@
+spring:
+  datasource:
+    # use druid as spring datasource pool
+    type: com.alibaba.druid.pool.DruidDataSource
+    # custom clickhouse datasource
+    clickhouse:
+      dbType: clickhouse
+      driver: ru.yandex.clickhouse.ClickHouseDriver
+      nodeList: 10.177.241.195:8133,10.177.94.213:8133,10.176.94.234:8133
+      database: bitmap_test
+      username: ck_w
+      password: q55DdYQI
+      initialSize: 10
+      maxActive: 100
+      minIdle: 10
+      maxWait: 6000
+    # druid configurations
+    # see more details in https://github.com/alibaba/druid/wiki
+    druid:
+      # filters should be configured manually and set "enabled: true", default is "false"
+      filters: stat
+      filter:
+        stat:
+          enabled: true
+          log-slow-sql: true
+          slow-sql-millis: 2000
+      web-stat-filter:
+        enabled: true
+        exclusions:
+          - "*.js"
+          - "*.gif"
+          - "*.jpg"
+          - "*.css"
+          - "*.ico"
+          - "/druid/*"
+      # web-console should be configured manually and set "enabled: true", default is "false"
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        reset-enable: false
+        login-username: admin
+        login-password: admin

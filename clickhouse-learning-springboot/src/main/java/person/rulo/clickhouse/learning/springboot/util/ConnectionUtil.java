@@ -3,7 +3,6 @@ package person.rulo.clickhouse.learning.springboot.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import person.rulo.clickhouse.learning.springboot.core.executor.SqlExecutor;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -17,7 +16,7 @@ import java.sql.Statement;
 @Component
 public class ConnectionUtil {
 
-    private final Logger logger = LoggerFactory.getLogger(SqlExecutor.class);
+    private final Logger logger = LoggerFactory.getLogger(ConnectionUtil.class);
 
     public void closeResource(Connection conn) {
         if (conn != null) {
