@@ -5,6 +5,8 @@ import person.rulo.clickhouse.learning.springboot.core.entity.type.JavaType;
 /**
  * @Author rulo
  * @Date 2021/1/2 15:34
+ *
+ * 响应代码
  */
 public enum ResponseCode {
 

@@ -7,7 +7,7 @@ import java.util.Map;
  * @Author rulo
  * @Date 2020/11/25 19:59
  *
- * Map 列表型结果集包装器
+ * 列表型 Map 结果集包装器
  */
 public class ListMapWrapper extends ResultWrapper<List<Map<String, Object>>> {
 

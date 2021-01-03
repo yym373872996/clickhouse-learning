@@ -15,6 +15,8 @@ import javax.annotation.Resource;
 /**
  * @Author rulo
  * @Date 2021/1/2 14:43
+ *
+ * 面向查询的切面类
  */
 @Aspect
 @Component
@@ -25,6 +27,12 @@ public class QueryAspect {
     @Resource
     ExceptionUtil exceptionUtil;
 
+    /**
+     * 在调用 query 方法时的切面操作，用于统计耗时与捕获异常
+     * @param proceedingJoinPoint
+     * @return
+     * @throws Throwable
+     */
     @Around("execution(person.rulo.clickhouse.learning.springboot.core.entity.response.QueryResponse person.rulo.clickhouse.learning.springboot.core.queryable.Queryable.query(..))")
     public QueryResponse aroundQuery(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();

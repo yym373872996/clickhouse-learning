@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 /**
  * @Author rulo
  * @Date 2020/12/1 10:07
+ *
+ * Bean 工具类
  */
 @Component
 public class GetBeanUtil implements ApplicationContextAware {

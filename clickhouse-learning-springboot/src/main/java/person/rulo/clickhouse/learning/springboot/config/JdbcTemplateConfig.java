@@ -12,6 +12,8 @@ import java.util.List;
 /**
  * @Author rulo
  * @Date 2021/1/1 23:06
+ *
+ * JDBC Template 配置
  */
 @Configuration
 public class JdbcTemplateConfig {

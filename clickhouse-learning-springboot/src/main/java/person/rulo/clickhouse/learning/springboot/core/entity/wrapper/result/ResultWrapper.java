@@ -1,7 +1,6 @@
 package person.rulo.clickhouse.learning.springboot.core.entity.wrapper.result;
 
 import person.rulo.clickhouse.learning.springboot.core.entity.wrapper.AbstractWrapper;
-import person.rulo.clickhouse.learning.springboot.core.entity.wrapper.Wrapper;
 
 /**
  * @Author rulo

@@ -15,6 +15,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 /**
  * @Author rulo
  * @Date 2021/1/3 12:07
+ *
+ * 查询任务线程池配置
  */
 @Configuration
 @EnableAsync
@@ -23,6 +25,10 @@ public class QueryTaskExecutorConfig {
     @Resource
     QueryTaskExecutorProps queryTaskExecutorProps;
 
+    /**
+     * 使用 spring 提供的线程池类
+     * @return
+     */
     @Bean(name = "queryTaskExecutor")
     public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor queryTaskExecutor = new ThreadPoolTaskExecutor();

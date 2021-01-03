@@ -8,10 +8,19 @@ import java.math.BigInteger;
 /**
  * @Author rulo
  * @Date 2020/11/30 17:18
+ *
+ * 数值计算工具类
  */
 @Component
 public class CalculatorUtil {
 
+    /**
+     * 根据入参的 Java 类型求和
+     * @param a
+     * @param b
+     * @param javaType
+     * @return
+     */
     public Object sum(Object a, Object b, JavaType javaType) {
         switch (javaType) {
             case SHORT:
@@ -42,6 +51,13 @@ public class CalculatorUtil {
         return null;
     }
 
+    /**
+     * 根据入参的 Java 类型求最小值
+     * @param a
+     * @param b
+     * @param javaType
+     * @return
+     */
     public Object min(Object a, Object b, JavaType javaType) {
         switch (javaType) {
             case SHORT:
@@ -72,6 +88,13 @@ public class CalculatorUtil {
         return null;
     }
 
+    /**
+     * 根据入参的 Java 类型求最大值
+     * @param a
+     * @param b
+     * @param javaType
+     * @return
+     */
     public Object max(Object a, Object b, JavaType javaType) {
         switch (javaType) {
             case SHORT:
@@ -102,6 +125,13 @@ public class CalculatorUtil {
         return null;
     }
 
+    /**
+     * 根据入参的 Java 类型相除
+     * @param a
+     * @param b
+     * @param javaType
+     * @return
+     */
     public Object divide(Object a, Object b, JavaType javaType) {
         switch (javaType) {
             case SHORT:

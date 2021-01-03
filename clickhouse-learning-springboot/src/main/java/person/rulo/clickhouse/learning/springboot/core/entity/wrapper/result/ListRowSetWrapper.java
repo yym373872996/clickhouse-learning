@@ -8,7 +8,7 @@ import java.util.Map;
  * @Author rulo
  * @Date 2020/11/24 16:51
  *
- * RowSet 列表型结果集包装器
+ * 列表型 RowSet 结果集包装器
  */
 public class ListRowSetWrapper extends ResultWrapper<List<RowSet>> {
 

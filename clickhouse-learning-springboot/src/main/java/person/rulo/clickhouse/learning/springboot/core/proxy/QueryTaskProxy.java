@@ -15,6 +15,8 @@ import java.util.concurrent.Future;
 /**
  * @Author rulo
  * @Date 2021/1/3 17:22
+ *
+ * 查询任务执行代理
  */
 @Component
 public class QueryTaskProxy {
@@ -24,6 +26,12 @@ public class QueryTaskProxy {
     @Resource
     NativeJdbcHandler nativeJdbcHandler;
 
+    /**
+     * 异步执行查询任务
+     * @param dataSource
+     * @param sql
+     * @return
+     */
     @Async("queryTaskExecutor")
     public Future<RowSet> queryAsync(DataSource dataSource, String sql) {
         logger.info("start execution: {}", Thread.currentThread().getName());
@@ -38,6 +46,12 @@ public class QueryTaskProxy {
         return new AsyncResult<>(rowSet);
     }
 
+    /**
+     * 同步执行查询
+     * @param dataSource
+     * @param sql
+     * @return
+     */
     public RowSet querySync(DataSource dataSource, String sql) {
         return nativeJdbcHandler.executeQuery(dataSource, sql);
     }

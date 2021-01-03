@@ -7,6 +7,8 @@ import person.rulo.clickhouse.learning.springboot.common.RejectedPolicy;
 /**
  * @Author rulo
  * @Date 2021/1/3 12:30
+ *
+ * 查询任务线程池配置属性
  */
 @Component
 @ConfigurationProperties(prefix = "task.execution.query")

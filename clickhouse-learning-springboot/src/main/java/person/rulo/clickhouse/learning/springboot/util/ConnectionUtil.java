@@ -12,6 +12,8 @@ import java.sql.Statement;
 /**
  * @Author rulo
  * @Date 2020/7/9 10:15
+ *
+ * JDBC 连接工具类
  */
 @Component
 public class ConnectionUtil {
