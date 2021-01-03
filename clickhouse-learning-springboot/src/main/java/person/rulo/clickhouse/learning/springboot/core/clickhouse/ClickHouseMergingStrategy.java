@@ -2,21 +2,18 @@ package person.rulo.clickhouse.learning.springboot.core.clickhouse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import person.rulo.clickhouse.learning.springboot.core.entity.type.JavaType;
+import person.rulo.clickhouse.learning.springboot.core.entity.wrapper.result.ListMapWrapper;
+import person.rulo.clickhouse.learning.springboot.core.entity.wrapper.result.ListRowSetWrapper;
+import person.rulo.clickhouse.learning.springboot.core.entity.wrapper.result.MapWrapper;
 import person.rulo.clickhouse.learning.springboot.core.strategy.ListMergingStrategy;
-import person.rulo.clickhouse.learning.springboot.core.data.type.JavaType;
-import person.rulo.clickhouse.learning.springboot.core.data.wrapper.result.ListMapWrapper;
-import person.rulo.clickhouse.learning.springboot.core.data.wrapper.result.ListRowSetWrapper;
-import person.rulo.clickhouse.learning.springboot.core.data.wrapper.result.MapWrapper;
 import person.rulo.clickhouse.learning.springboot.util.CalculatorUtil;
 import person.rulo.clickhouse.learning.springboot.util.GetBeanUtil;
 
 import javax.sql.RowSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author rulo
@@ -51,14 +48,13 @@ public class ClickHouseMergingStrategy extends ListMergingStrategy {
                         if (columnValue != null) {
                             map.put(columnName, columnValue);
                         }
-                        result.add(map);
                     }
+                    result.add(map);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
-        logger.info("union result: {}", result);
         return new ListMapWrapper(result);
     }
 
@@ -81,9 +77,9 @@ public class ClickHouseMergingStrategy extends ListMergingStrategy {
                     rowNum++;
                     for (int i = 1; i <= rsmd.getColumnCount(); i++) {
                         String columnName = rsmd.getColumnName(i);
-                        System.out.println(columnName);
+//                        logger.info("during aggregateResult, columnName: {}", columnName);
                         String columnType = rsmd.getColumnTypeName(i);
-                        System.out.println(columnType);
+//                        logger.info("during aggregateResult, columnType: {}", columnType);
                         Object columnValue = clickHouseJdbcHelper.getValueByFieldType(rowSet.getObject(rsmd.getColumnName(i)), columnType);
                         if (columnValue == null) break;
                         /* 设置字段元数据中的字段类型与java类型 */
@@ -121,7 +117,6 @@ public class ClickHouseMergingStrategy extends ListMergingStrategy {
                 e.printStackTrace();
             }
         }
-        logger.info("aggregate result: {}", result);
         return new MapWrapper(result);
     }
 }

@@ -1,12 +1,12 @@
 package person.rulo.clickhouse.learning.springboot.core.strategy;
 
 import com.alibaba.druid.sql.ast.SQLStatement;
-import person.rulo.clickhouse.learning.springboot.core.data.type.MergingOperation;
-import person.rulo.clickhouse.learning.springboot.core.data.wrapper.datasouce.ListDataSourceWrapper;
-import person.rulo.clickhouse.learning.springboot.core.data.wrapper.result.ListMapWrapper;
-import person.rulo.clickhouse.learning.springboot.core.data.wrapper.result.ListRowSetWrapper;
-import person.rulo.clickhouse.learning.springboot.core.data.wrapper.result.MapWrapper;
-import person.rulo.clickhouse.learning.springboot.core.data.wrapper.result.ResultWrapper;
+import person.rulo.clickhouse.learning.springboot.core.entity.type.MergingOperation;
+import person.rulo.clickhouse.learning.springboot.core.entity.wrapper.datasouce.ListDataSourceWrapper;
+import person.rulo.clickhouse.learning.springboot.core.entity.wrapper.result.ListMapWrapper;
+import person.rulo.clickhouse.learning.springboot.core.entity.wrapper.result.ListRowSetWrapper;
+import person.rulo.clickhouse.learning.springboot.core.entity.wrapper.result.MapWrapper;
+import person.rulo.clickhouse.learning.springboot.core.entity.wrapper.result.ResultWrapper;
 
 import java.util.Map;
 

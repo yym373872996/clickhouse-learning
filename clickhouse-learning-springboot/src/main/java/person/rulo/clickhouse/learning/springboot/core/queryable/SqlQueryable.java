@@ -1,7 +1,7 @@
 package person.rulo.clickhouse.learning.springboot.core.queryable;
 
-import person.rulo.clickhouse.learning.springboot.core.data.response.QueryResponse;
-import person.rulo.clickhouse.learning.springboot.core.data.request.SqlQueryRequest;
+import person.rulo.clickhouse.learning.springboot.core.entity.response.QueryResponse;
+import person.rulo.clickhouse.learning.springboot.core.entity.request.SqlQueryRequest;
 
 /**
  * @Author rulo

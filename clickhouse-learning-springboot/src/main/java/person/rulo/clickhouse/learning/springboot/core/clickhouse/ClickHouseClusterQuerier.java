@@ -5,26 +5,28 @@ import com.alibaba.druid.sql.ast.statement.SQLSelectItem;
 import com.alibaba.druid.sql.ast.statement.SQLSelectQueryBlock;
 import com.alibaba.druid.sql.ast.statement.SQLSelectStatement;
 import com.google.common.base.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
-import person.rulo.clickhouse.learning.springboot.core.executor.SqlExecutor;
 import person.rulo.clickhouse.learning.springboot.core.parser.SqlParseHelper;
 import person.rulo.clickhouse.learning.springboot.core.queryable.StrategicSqlQuerier;
-import person.rulo.clickhouse.learning.springboot.core.data.request.SqlQueryRequest;
-import person.rulo.clickhouse.learning.springboot.core.data.response.QueryResponse;
+import person.rulo.clickhouse.learning.springboot.core.entity.request.SqlQueryRequest;
+import person.rulo.clickhouse.learning.springboot.core.entity.response.QueryResponse;
 import person.rulo.clickhouse.learning.springboot.core.strategy.FieldMetaData;
 import person.rulo.clickhouse.learning.springboot.core.strategy.Strategy;
-import person.rulo.clickhouse.learning.springboot.core.data.type.MergingOperation;
-import person.rulo.clickhouse.learning.springboot.core.data.wrapper.datasouce.ListDataSourceWrapper;
-import person.rulo.clickhouse.learning.springboot.core.data.wrapper.result.ListRowSetWrapper;
-import person.rulo.clickhouse.learning.springboot.core.data.wrapper.result.ResultWrapper;
+import person.rulo.clickhouse.learning.springboot.core.entity.type.MergingOperation;
+import person.rulo.clickhouse.learning.springboot.core.entity.wrapper.datasouce.ListDataSourceWrapper;
+import person.rulo.clickhouse.learning.springboot.core.entity.wrapper.result.ListRowSetWrapper;
+import person.rulo.clickhouse.learning.springboot.core.entity.wrapper.result.ResultWrapper;
+import person.rulo.clickhouse.learning.springboot.core.proxy.QueryTaskProxy;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 import javax.sql.RowSet;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * @Author rulo
@@ -33,17 +35,20 @@ import java.util.Map;
  * ClickHouse 集群查询实现
  */
 @Component
+@EnableAsync
 public class ClickHouseClusterQuerier extends StrategicSqlQuerier {
 
-    @Resource
-    SqlExecutor sqlExecutor;
+    private static Logger logger = LoggerFactory.getLogger(ClickHouseClusterQuerier.class);
+
     @Resource
     ClickHouseSqlParser clickHouseSqlParser;
     @Resource
     SqlParseHelper sqlParseHelper;
+    @Resource
+    QueryTaskProxy queryTaskProxy;
 
     /**
-     * 解析 SQL 查询请求并生成适配于 ClickHouse 集群数据源的结果合并策略
+     * 解析查询请求并生成适用于 ClickHouse 集群数据源的结果合并策略
      * @param sqlQueryRequest
      * @return
      * @throws Exception
@@ -90,7 +95,7 @@ public class ClickHouseClusterQuerier extends StrategicSqlQuerier {
     }
 
     /**
-     * 遍历数据源并进行查询，将查询结果打包返回
+     * 查询所有数据源，将查询结果打包返回
      * @param strategy
      * @return
      */
@@ -100,15 +105,25 @@ public class ClickHouseClusterQuerier extends StrategicSqlQuerier {
         List<RowSet> rowSetList = new ArrayList<>();
         ListDataSourceWrapper listDataSourceWrapper = clickHouseMergingStrategy.getListDataSourceWrapper();
         List<DataSource> dataSourceList = listDataSourceWrapper.getContent();
+        String sql = clickHouseMergingStrategy.getSqlStatement().toString();
+        List<Future<RowSet>> futureList = new ArrayList<>();
         dataSourceList.forEach(dataSource -> {
-            RowSet rowSet = sqlExecutor.executeQuery(dataSource, clickHouseMergingStrategy.getSqlStatement().toString());
-            rowSetList.add(rowSet);
+            futureList.add(queryTaskProxy.queryAsync(dataSource, sql));
+        });
+        futureList.forEach(future -> {
+            try {
+                rowSetList.add(future.get());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
         });
         return new ListRowSetWrapper(rowSetList);
     }
 
     /**
-     * 合并从 ClickHouse 集群返回的查询结果
+     * 合并从多个数据源返回的查询结果并封装成响应体返回
      * @param resultWrapper
      * @param strategy
      * @return

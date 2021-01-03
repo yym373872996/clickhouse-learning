@@ -1,7 +1,7 @@
 package person.rulo.clickhouse.learning.springboot.util;
 
 import org.springframework.stereotype.Component;
-import person.rulo.clickhouse.learning.springboot.core.data.type.JavaType;
+import person.rulo.clickhouse.learning.springboot.core.entity.type.JavaType;
 
 import java.math.BigInteger;
 

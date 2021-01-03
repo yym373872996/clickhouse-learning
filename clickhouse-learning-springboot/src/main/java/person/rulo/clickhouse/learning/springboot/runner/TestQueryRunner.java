@@ -1,16 +1,25 @@
 package person.rulo.clickhouse.learning.springboot.runner;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
+import person.rulo.clickhouse.learning.springboot.common.ResponseCode;
 import person.rulo.clickhouse.learning.springboot.core.clickhouse.ClickHouseClusterQuerier;
-import person.rulo.clickhouse.learning.springboot.core.data.request.SqlQueryRequest;
-import person.rulo.clickhouse.learning.springboot.core.data.wrapper.datasouce.ListDataSourceWrapper;
+import person.rulo.clickhouse.learning.springboot.core.entity.request.SqlQueryRequest;
+import person.rulo.clickhouse.learning.springboot.core.entity.response.QueryResponse;
+import person.rulo.clickhouse.learning.springboot.core.entity.wrapper.datasouce.ListDataSourceWrapper;
+import person.rulo.clickhouse.learning.springboot.core.entity.wrapper.result.ResultWrapper;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
-import java.util.ArrayList;
+import javax.sql.RowSet;
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author rulo
@@ -19,6 +28,8 @@ import java.util.List;
 @Component
 public class TestQueryRunner implements ApplicationRunner {
 
+    private static Logger logger = LoggerFactory.getLogger(TestQueryRunner.class);
+
     @Resource
     List<DataSource> dataSourceList;
     @Resource
@@ -26,18 +37,45 @@ public class TestQueryRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        List<String> sqlList = new ArrayList<>();
-        sqlList.add(getSqlUserGroup());
-//        sqlList.add(getSqlUserGroupCount());
-//        sqlList.add(getSqlUserProfiles());
-//        sqlList.add(getSqlUserInsights());
-        sqlList.forEach(sql -> {
-            ListDataSourceWrapper dataSourceWrapper = new ListDataSourceWrapper();
-            dataSourceWrapper.setContent(dataSourceList);
+        Map<String, String> sqls = new HashMap<>();
+        sqls.put("queryUserGroup", getSqlUserGroup());
+        sqls.put("queryUserGroupCount", getSqlUserGroupCount());
+        sqls.put("queryUserProfiles", getSqlUserProfiles());
+        sqls.put("queryUserInsights", getSqlUserInsights());
+        sqls.forEach((name, sql) -> {
+            ListDataSourceWrapper dataSourceWrapper = new ListDataSourceWrapper(dataSourceList);
             SqlQueryRequest request = new SqlQueryRequest();
             request.setDataSourceWrapper(dataSourceWrapper);
             request.setSql(sql);
-            querier.query(request);
+            logger.info("{} start", name);
+            QueryResponse response = querier.query(request);
+            String code = response.getCode();
+            logger.info("execution end, code: {}, time cost: {} ms", code, response.getCostTime());
+            if (ResponseCode.SUCCESS.getCode().equals(code)) {
+                ResultWrapper resultWrapper = response.getResultWrapper();
+                Object content = resultWrapper.getContent();
+                if (content instanceof List) {
+                    List list = (List) content;
+                    logger.info("union result: {}", list);
+                    list.forEach(item -> {
+                        if (item instanceof Map) {
+                            ((Map) item).forEach((columnName, columnValue) -> {
+                                String value = null;
+                                if (columnValue.getClass().isArray()) {
+                                    value = Arrays.toString((Object[]) columnValue);
+                                }
+                                if (columnValue instanceof String) {
+                                    value = columnValue.toString();
+                                }
+                                logger.info("each result: { {}: {} }", columnName, value);
+                            });
+                        }
+                    });
+                } else if (content instanceof Map) {
+                    logger.info("aggregate result: {}", content);
+                }
+            }
+            logger.info("{} end", name);
         });
     }
 
@@ -46,9 +84,8 @@ public class TestQueryRunner implements ApplicationRunner {
                 "    labelname, \n" +
                 "    labelvalue\n" +
                 "FROM label_string_granularity_1\n" +
-                "WHERE dayno = '2020-11-25' AND bitmapContains(uv, toUInt32(5)) = 1\n" +
-                "LIMIT 3\n" +
-                "settings merge_tree_min_rows_for_concurrent_read=100";
+                "WHERE dayno = '2020-11-25' AND bitmapContains(uv, toUInt32(10)) = 1\n" +
+                "LIMIT 3";
         return sql;
     }
 
